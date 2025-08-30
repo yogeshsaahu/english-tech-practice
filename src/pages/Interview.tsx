@@ -1,52 +1,111 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Mic, MicOff, Send, RotateCcw, Home } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Mic, MicOff, Send, LogOut, MessageSquare, Volume2, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import aiAvatar from "@/assets/ai-avatar.png";
 
+type MessageSender = "ai" | "user";
+
+interface Message {
+  id: number;
+  sender: MessageSender;
+  text: string;
+  timestamp: Date;
+  isTyping?: boolean;
+}
+
 const Interview = () => {
+  const navigate = useNavigate();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [currentMessage, setCurrentMessage] = useState("");
-  const [messages, setMessages] = useState([
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(1);
+  const [totalQuestions] = useState(8);
+  const [technicalScore] = useState(85);
+  const [fluencyScore] = useState(78);
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       sender: "ai",
       text: "Hello! I'm your AI interviewer. I'll be conducting a technical interview with you today. Let's start with a simple question: Can you tell me about yourself and your experience with software development?",
-      timestamp: new Date()
+      timestamp: new Date(),
+      isTyping: false
     }
   ]);
-  const [currentQuestion, setCurrentQuestion] = useState(1);
-  const [totalQuestions] = useState(8);
-  const [timeElapsed, setTimeElapsed] = useState(5); // minutes
+
+  const currentQuestionText = "Tell me about yourself and your experience with software development. Focus on your technical skills and recent projects.";
+
+  // Timer effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeElapsed(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Auto scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleSendMessage = () => {
     if (!currentMessage.trim()) return;
 
-    const newMessage = {
+    const newMessage: Message = {
       id: messages.length + 1,
-      sender: "user" as const,
+      sender: "user",
       text: currentMessage,
-      timestamp: new Date()
+      timestamp: new Date(),
+      isTyping: false
     };
 
     setMessages(prev => [...prev, newMessage]);
     setCurrentMessage("");
 
-    // Simulate AI response
+    // Show typing indicator
     setTimeout(() => {
-      const aiResponse = {
+      const typingMessage: Message = {
         id: messages.length + 2,
-        sender: "ai" as const,
-        text: "Great! I can see you have solid experience. Let me ask you a technical question: How would you implement a LRU cache in your preferred programming language?",
-        timestamp: new Date()
+        sender: "ai",
+        text: "",
+        timestamp: new Date(),
+        isTyping: true
       };
-      setMessages(prev => [...prev, aiResponse]);
-      setCurrentQuestion(prev => prev + 1);
-    }, 1500);
+      setMessages(prev => [...prev, typingMessage]);
+
+      // Replace with actual response
+      setTimeout(() => {
+        const responses = [
+          "Excellent! I can see you have solid experience. Let me ask you a technical question: How would you implement a LRU cache in your preferred programming language?",
+          "That's great background. Now, let's dive deeper: Can you explain the difference between SQL and NoSQL databases? When would you choose one over the other?",
+          "Interesting approach! Here's a system design question: How would you design a URL shortener like bit.ly? Walk me through your architecture.",
+          "Good explanation! Let's talk about data structures: Can you implement a binary search tree and explain its time complexities?"
+        ];
+        
+        const aiResponse: Message = {
+          id: messages.length + 2,
+          sender: "ai",
+          text: responses[Math.min(currentQuestion - 1, responses.length - 1)],
+          timestamp: new Date(),
+          isTyping: false
+        };
+        
+        setMessages(prev => prev.slice(0, -1).concat([aiResponse]));
+        setCurrentQuestion(prev => Math.min(prev + 1, totalQuestions));
+      }, 2000);
+    }, 800);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -60,203 +119,248 @@ const Interview = () => {
     setIsRecording(!isRecording);
   };
 
+  const toggleVoiceMode = () => {
+    setIsVoiceMode(!isVoiceMode);
+  };
+
+  const exitSession = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-border p-4">
+      <header className="bg-card border-b border-border p-4 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link to="/" className="flex items-center space-x-2">
-              <Home className="h-5 w-5" />
-              <span className="font-medium">Back to Home</span>
-            </Link>
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-2">
+              <Clock className="h-5 w-5 text-muted-foreground" />
+              <div className="text-2xl font-bold text-primary">{formatTime(timeElapsed)}</div>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <MessageSquare className="h-5 w-5 text-muted-foreground" />
+              <div className="text-lg font-medium">{currentQuestion}/{totalQuestions} Questions</div>
+            </div>
           </div>
           
-          <div className="flex items-center space-x-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{timeElapsed}:23</div>
-              <div className="text-sm text-muted-foreground">Time Elapsed</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{currentQuestion}/{totalQuestions}</div>
-              <div className="text-sm text-muted-foreground">Questions</div>
-            </div>
-            
-            <Button variant="outline" size="sm">
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Restart
-            </Button>
-          </div>
+          <Button 
+            variant="destructive" 
+            size="sm"
+            onClick={exitSession}
+            className="flex items-center space-x-2"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Exit Session</span>
+          </Button>
         </div>
       </header>
 
-      {/* Main Interview Area */}
+      {/* Main Content */}
       <div className="flex-1 flex">
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Progress Bar */}
-          <div className="p-4 bg-muted/30">
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Interview Progress</span>
-                <span className="text-sm text-muted-foreground">
-                  {Math.round((currentQuestion / totalQuestions) * 100)}% Complete
-                </span>
-              </div>
-              <Progress value={(currentQuestion / totalQuestions) * 100} className="h-2" />
-            </div>
-          </div>
-
+        <div className="flex-1 flex flex-col max-w-4xl mx-auto px-4">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4">
-            <div className="max-w-4xl mx-auto space-y-6">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`flex space-x-3 max-w-3xl ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    {/* Avatar */}
-                    <div className="flex-shrink-0">
-                      {message.sender === 'ai' ? (
+          <div className="flex-1 overflow-y-auto py-6 space-y-6">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex animate-fade-in ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`flex space-x-3 max-w-2xl ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                  {/* Avatar */}
+                  <div className="flex-shrink-0">
+                    {message.sender === 'ai' ? (
+                      <div className="w-12 h-12 rounded-full bg-muted p-2 flex items-center justify-center">
                         <img 
                           src={aiAvatar} 
                           alt="AI Interviewer" 
-                          className="w-10 h-10 rounded-full bg-primary/10 p-1"
+                          className="w-8 h-8 rounded-full"
                         />
-                      ) : (
-                        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                          <span className="text-white font-medium text-sm">You</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Message */}
-                    <div className={`rounded-2xl px-4 py-3 ${
-                      message.sender === 'ai' 
-                        ? 'bg-muted text-foreground' 
-                        : 'bg-primary text-white'
-                    }`}>
-                      <p className="text-sm leading-relaxed">{message.text}</p>
-                      <div className="text-xs opacity-70 mt-2">
-                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </div>
-                    </div>
+                    ) : (
+                      <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                        <span className="text-primary-foreground font-medium text-sm">You</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Message */}
+                  <div className={`rounded-2xl px-4 py-3 shadow-sm ${
+                    message.sender === 'ai' 
+                      ? 'bg-muted text-foreground' 
+                      : 'bg-primary text-primary-foreground'
+                  }`}>
+                    {message.isTyping ? (
+                      <div className="flex items-center space-x-1">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-pulse"></div>
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                        </div>
+                        <span className="text-sm text-muted-foreground ml-2">AI is typing...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm leading-relaxed">{message.text}</p>
+                        <div className="text-xs opacity-70 mt-2">
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
-          <div className="border-t border-border p-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-end space-x-3">
-                <div className="flex-1">
-                  <Input
-                    value={currentMessage}
-                    onChange={(e) => setCurrentMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Type your answer here..."
-                    className="min-h-[60px] resize-none"
-                  />
-                </div>
-                
-                <div className="flex space-x-2">
-                  <Button
-                    onClick={toggleRecording}
-                    variant={isRecording ? "destructive" : "outline"}
-                    size="icon"
-                    className="h-[60px] w-[60px]"
-                  >
-                    {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-                  </Button>
-                  
-                  <Button
-                    onClick={handleSendMessage}
-                    disabled={!currentMessage.trim()}
-                    className="h-[60px] w-[60px] bg-primary hover:bg-primary-hover"
-                    size="icon"
-                  >
-                    <Send className="h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
-
-              {isRecording && (
-                <div className="flex items-center justify-center mt-3 text-sm text-primary">
-                  <div className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></div>
-                  Recording... Click mic to stop
-                </div>
-              )}
+          {/* Input Area - Sticky */}
+          <div className="sticky bottom-0 bg-background border-t border-border p-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <Button
+                variant={isVoiceMode ? "default" : "outline"}
+                size="sm"
+                onClick={toggleVoiceMode}
+                className="flex items-center space-x-2"
+              >
+                <Volume2 className="h-4 w-4" />
+                <span>Voice Mode</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center space-x-2"
+              >
+                <MessageSquare className="h-4 w-4" />
+                <span>Text Mode</span>
+              </Button>
             </div>
+            
+            <div className="flex items-end space-x-3">
+              <div className="flex-1">
+                <Textarea
+                  value={currentMessage}
+                  onChange={(e) => setCurrentMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type your answer here..."
+                  className="min-h-[60px] resize-none"
+                />
+              </div>
+              
+              <div className="flex space-x-2">
+                <Button
+                  onClick={toggleRecording}
+                  variant={isRecording ? "destructive" : "outline"}
+                  size="icon"
+                  className="h-[60px] w-[60px]"
+                >
+                  {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                </Button>
+                
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={!currentMessage.trim()}
+                  className="h-[60px] w-[60px]"
+                  size="icon"
+                >
+                  <Send className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+
+            {isRecording && (
+              <div className="flex items-center justify-center mt-3 text-sm text-primary animate-fade-in">
+                <div className="w-2 h-2 bg-destructive rounded-full mr-2 animate-pulse"></div>
+                Recording... Click mic to stop
+              </div>
+            )}
           </div>
         </div>
 
         {/* Sidebar */}
-        <div className="w-80 border-l border-border bg-muted/30 p-6">
-          <div className="space-y-6">
-            {/* Current Question */}
-            <Card className="card-modern">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold">Current Question</h3>
-                  <Badge variant="secondary">{currentQuestion} of {totalQuestions}</Badge>
+        <div className="w-80 border-l border-border bg-muted/30 p-6 space-y-6">
+          {/* Progress */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Session Progress</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between text-sm">
+                <span>Questions Completed</span>
+                <span className="font-medium">{currentQuestion - 1}/{totalQuestions}</span>
+              </div>
+              <Progress value={(currentQuestion - 1) / totalQuestions * 100} className="h-2" />
+            </CardContent>
+          </Card>
+
+          {/* Current Question */}
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">Current Question</CardTitle>
+                <Badge variant="secondary">{currentQuestion}</Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {currentQuestionText}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Performance */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Live Performance</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span>Technical Score</span>
+                  <span className="font-medium">{technicalScore}%</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  We're focusing on technical problem-solving and system design concepts.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Session Info */}
-            <Card className="card-modern">
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-3">Session Details</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Interview Type:</span>
-                    <span>Full Stack Developer</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Difficulty:</span>
-                    <Badge variant="outline">Intermediate</Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Duration:</span>
-                    <span>45 minutes</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Company:</span>
-                    <span>Tech Startup</span>
-                  </div>
+                <Progress value={technicalScore} className="h-2" />
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span>Fluency Score</span>
+                  <span className="font-medium">{fluencyScore}%</span>
                 </div>
-              </CardContent>
-            </Card>
+                <Progress value={fluencyScore} className="h-2" />
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Quick Tips */}
-            <Card className="card-modern">
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-3">💡 Quick Tips</h3>
-                <ul className="text-sm space-y-2 text-muted-foreground">
-                  <li>• Take your time to think before answering</li>
-                  <li>• Ask clarifying questions when needed</li>
-                  <li>• Explain your thought process clearly</li>
-                  <li>• Use specific examples from your experience</li>
-                </ul>
-              </CardContent>
-            </Card>
+          {/* Session Info */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Session Info</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Role:</span>
+                <span>Full Stack Developer</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Level:</span>
+                <Badge variant="outline">Intermediate</Badge>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Duration:</span>
+                <span>45 min</span>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Actions */}
-            <div className="space-y-3">
-              <Button variant="outline" className="w-full">
-                Skip Question
-              </Button>
-              <Button variant="destructive" className="w-full">
-                End Interview
-              </Button>
-            </div>
+          {/* Actions */}
+          <div className="space-y-3">
+            <Button variant="outline" className="w-full">
+              Skip Question
+            </Button>
+            <Button variant="destructive" className="w-full" onClick={exitSession}>
+              End Interview
+            </Button>
           </div>
         </div>
       </div>
