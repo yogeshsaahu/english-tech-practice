@@ -111,15 +111,15 @@ const Index = () => {
                   with our AI-powered interview preparation platform.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link to="/signup">
+                  <Link to="/demo">
                     <Button size="lg" className="btn-hero">
-                      Start Free
+                      Try Free Demo
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
-                  <Link to="/pricing">
+                  <Link to="/signup">
                     <Button size="lg" className="btn-secondary">
-                      View Plans
+                      Start Free Trial
                     </Button>
                   </Link>
                 </div>

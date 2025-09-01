@@ -31,6 +31,12 @@ const Header = () => {
               Home
             </Link>
             <Link 
+              to="/demo" 
+              className={`font-medium transition-colors ${isActive('/demo') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Try Demo
+            </Link>
+            <Link 
               to="/about" 
               className={`font-medium transition-colors ${isActive('/about') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
             >
@@ -107,6 +113,13 @@ const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
+              </Link>
+              <Link 
+                to="/demo" 
+                className={`font-medium ${isActive('/demo') ? 'text-primary' : 'text-muted-foreground'}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Try Demo
               </Link>
               <Link 
                 to="/about" 
