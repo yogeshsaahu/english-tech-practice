@@ -304,12 +304,21 @@ const Demo = () => {
               <p className="text-sm text-muted-foreground">
                 Get access to 50+ questions, detailed feedback, and progress tracking.
               </p>
-              <Button 
-                onClick={() => navigate("/signup")}
-                className="w-full"
-              >
-                Start Free Trial
-              </Button>
+              <div className="space-y-2">
+                <Button 
+                  onClick={() => navigate("/dashboard")}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Preview Dashboard
+                </Button>
+                <Button 
+                  onClick={() => navigate("/signup")}
+                  className="w-full"
+                >
+                  Start Free Trial
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
