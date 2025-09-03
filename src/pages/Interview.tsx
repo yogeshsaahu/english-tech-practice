@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Mic, MicOff, Send, LogOut, MessageSquare, Volume2, Clock } from "lucide-react";
+import { Mic, MicOff, LogOut, MessageSquare, Volume2, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import aiAvatar from "@/assets/ai-avatar.png";
 
@@ -22,8 +21,6 @@ const Interview = () => {
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [isVoiceMode, setIsVoiceMode] = useState(false);
-  const [currentMessage, setCurrentMessage] = useState("");
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [totalQuestions] = useState(8);
@@ -60,19 +57,16 @@ const Interview = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleSendMessage = () => {
-    if (!currentMessage.trim()) return;
-
+  const handleVoiceResponse = (transcribedText: string) => {
     const newMessage: Message = {
       id: messages.length + 1,
       sender: "user",
-      text: currentMessage,
+      text: transcribedText,
       timestamp: new Date(),
       isTyping: false
     };
 
     setMessages(prev => [...prev, newMessage]);
-    setCurrentMessage("");
 
     // Show typing indicator
     setTimeout(() => {
@@ -108,19 +102,20 @@ const Interview = () => {
     }, 800);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   const toggleRecording = () => {
-    setIsRecording(!isRecording);
-  };
-
-  const toggleVoiceMode = () => {
-    setIsVoiceMode(!isVoiceMode);
+    if (!isRecording) {
+      setIsRecording(true);
+      // Start voice recording logic here
+      console.log("Starting voice recording...");
+    } else {
+      setIsRecording(false);
+      // Stop recording and process voice input
+      console.log("Stopping voice recording...");
+      // Simulate voice transcription
+      setTimeout(() => {
+        handleVoiceResponse("This is a simulated voice response from the user.");
+      }, 1000);
+    }
   };
 
   const exitSession = () => {
@@ -215,66 +210,47 @@ const Interview = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area - Sticky */}
-          <div className="sticky bottom-0 bg-background border-t border-border p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Button
-                variant={isVoiceMode ? "default" : "outline"}
-                size="sm"
-                onClick={toggleVoiceMode}
-                className="flex items-center space-x-2"
-              >
-                <Volume2 className="h-4 w-4" />
-                <span>Voice Mode</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center space-x-2"
-              >
-                <MessageSquare className="h-4 w-4" />
-                <span>Text Mode</span>
-              </Button>
-            </div>
-            
-            <div className="flex items-end space-x-3">
-              <div className="flex-1">
-                <Textarea
-                  value={currentMessage}
-                  onChange={(e) => setCurrentMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Type your answer here..."
-                  className="min-h-[60px] resize-none"
-                />
+          {/* Voice Input Area - Sticky */}
+          <div className="sticky bottom-0 bg-background border-t border-border p-6">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-2">Voice Interview Mode</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Click the microphone to start speaking your answer
+                </p>
               </div>
               
-              <div className="flex space-x-2">
-                <Button
-                  onClick={toggleRecording}
-                  variant={isRecording ? "destructive" : "outline"}
-                  size="icon"
-                  className="h-[60px] w-[60px]"
-                >
-                  {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-                </Button>
-                
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={!currentMessage.trim()}
-                  className="h-[60px] w-[60px]"
-                  size="icon"
-                >
-                  <Send className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
+              <Button
+                onClick={toggleRecording}
+                variant={isRecording ? "destructive" : "default"}
+                size="lg"
+                className="h-20 w-20 rounded-full shadow-lg hover:shadow-xl transition-all"
+              >
+                {isRecording ? (
+                  <MicOff className="h-8 w-8" />
+                ) : (
+                  <Mic className="h-8 w-8" />
+                )}
+              </Button>
 
-            {isRecording && (
-              <div className="flex items-center justify-center mt-3 text-sm text-primary animate-fade-in">
-                <div className="w-2 h-2 bg-destructive rounded-full mr-2 animate-pulse"></div>
-                Recording... Click mic to stop
-              </div>
-            )}
+              {isRecording && (
+                <div className="flex flex-col items-center space-y-2 text-center animate-fade-in">
+                  <div className="flex items-center space-x-2 text-destructive">
+                    <div className="w-3 h-3 bg-destructive rounded-full animate-pulse"></div>
+                    <span className="font-medium">Recording in progress...</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Speak clearly and click the microphone again when finished
+                  </p>
+                </div>
+              )}
+
+              {!isRecording && (
+                <p className="text-xs text-muted-foreground text-center max-w-sm">
+                  🎙️ Press and hold the microphone button while speaking, then release when done
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
