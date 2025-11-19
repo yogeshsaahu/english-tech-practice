@@ -8,62 +8,62 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Core brand colors */
-    --background: 0 0% 100%;
-    --foreground: 215 25% 27%;
+    /* Core brand colors - Soft, clean, no-eye-strain */
+    --background: 216 33% 98%; /* #F8F9FB */
+    --foreground: 216 25% 10%; /* #1A1C1F */
 
     /* Card components */
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 27%;
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 216 25% 10%;
 
     /* Popover components */
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 27%;
+    --popover-foreground: 216 25% 10%;
 
-    /* Primary brand - Teal */
-    --primary: 172 66% 40%;
+    /* Primary brand - Indigo AI */
+    --primary: 239 84% 67%; /* #6366F1 */
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 172 66% 35%;
+    --primary-hover: 243 75% 59%; /* #4F46E5 */
 
     /* Secondary colors */
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 215 25% 27%;
+    --secondary: 216 33% 96%; /* #F2F4F7 Elevated Surface */
+    --secondary-foreground: 216 11% 32%; /* #4A4F57 */
 
     /* Muted colors */
-    --muted: 220 13% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 216 33% 96%;
+    --muted-foreground: 216 9% 52%; /* #7C828D */
 
-    /* Accent colors */
-    --accent: 172 66% 40%;
+    /* Accent colors - Teal/Aqua Neon */
+    --accent: 172 66% 40%; /* #14B8A6 */
     --accent-foreground: 0 0% 100%;
 
     /* Destructive colors */
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 60%; /* #EF4444 */
     --destructive-foreground: 0 0% 100%;
 
     /* Border and input */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 172 66% 40%;
+    --border: 217 25% 91%; /* #E3E8EF */
+    --input: 217 25% 91%;
+    --ring: 239 84% 67%;
 
     /* Success color */
-    --success: 142 76% 36%;
+    --success: 160 84% 39%; /* #10B981 */
     --success-foreground: 0 0% 100%;
 
     /* Warning color */
-    --warning: 38 92% 50%;
+    --warning: 38 92% 50%; /* #F59E0B */
     --warning-foreground: 0 0% 100%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(172 66% 40%), hsl(172 66% 50%));
-    --gradient-hero: linear-gradient(135deg, hsl(172 66% 40%) 0%, hsl(167 82% 51%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(220 13% 98%) 100%);
+    /* Gradients - Indigo → Electric Purple */
+    --gradient-primary: linear-gradient(135deg, hsl(239 84% 67%), hsl(283 89% 65%));
+    --gradient-hero: linear-gradient(135deg, hsl(239 84% 67%) 0%, hsl(283 89% 65%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(216 33% 98%) 100%);
 
     /* Shadows */
-    --shadow-soft: 0 2px 8px hsl(215 25% 27% / 0.08);
-    --shadow-medium: 0 4px 16px hsl(215 25% 27% / 0.12);
-    --shadow-large: 0 8px 32px hsl(215 25% 27% / 0.16);
-    --shadow-glow: 0 0 24px hsl(172 66% 40% / 0.25);
+    --shadow-soft: 0 2px 8px hsl(216 25% 10% / 0.08);
+    --shadow-medium: 0 4px 16px hsl(216 25% 10% / 0.12);
+    --shadow-large: 0 8px 32px hsl(216 25% 10% / 0.16);
+    --shadow-glow: 0 0 24px hsl(239 84% 67% / 0.3);
 
     /* Animation timings */
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -72,90 +72,83 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 216 11% 32%;
+    --sidebar-primary: 239 84% 67%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 216 33% 96%;
+    --sidebar-accent-foreground: 216 11% 32%;
+    --sidebar-border: 217 25% 91%;
+    --sidebar-ring: 239 84% 67%;
   }
 
   .dark {
-    /* Core brand colors - Dark mode */
-    --background: 0 0% 7%; /* #121212 */
-    --foreground: 0 0% 88%; /* #E0E0E0 */
+    /* Core brand colors - Premium + Futuristic */
+    --background: 216 26% 6%; /* #0D0F12 Deep charcoal */
+    --foreground: 216 20% 95%; /* #F3F4F6 */
 
     /* Card components - Dark mode */
-    --card: 0 0% 12%; /* #1E1E1E */
-    --card-foreground: 0 0% 100%; /* #FFFFFF for headings */
+    --card: 216 15% 8%; /* #121417 */
+    --card-foreground: 216 20% 95%;
 
     /* Popover components - Dark mode */
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 88%;
+    --popover: 216 15% 8%;
+    --popover-foreground: 216 20% 95%;
 
-    /* Primary brand - Keep blue accent */
-    --primary: 213 94% 68%; /* #2563EB */
+    /* Primary brand - Indigo AI Dark */
+    --primary: 239 84% 75%; /* #818CF8 */
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 213 94% 63%;
+    --primary-hover: 239 84% 82%; /* #A5B4FC */
 
     /* Secondary colors - Dark mode */
-    --secondary: 0 0% 17%; /* #2C2C2C */
-    --secondary-foreground: 0 0% 88%;
+    --secondary: 216 13% 13%; /* #1A1D21 Surface Elevated */
+    --secondary-foreground: 216 12% 77%; /* #BFC3C9 */
 
     /* Muted colors - Dark mode */
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 216 13% 13%;
+    --muted-foreground: 216 10% 48%; /* #6F7782 */
 
-    /* Accent colors - Dark mode */
-    --accent: 213 94% 68%;
+    /* Accent colors - Aqua Neon */
+    --accent: 172 66% 50%; /* #2DD4BF */
     --accent-foreground: 0 0% 100%;
 
     /* Destructive colors - Dark mode */
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 71%; /* #F87171 */
     --destructive-foreground: 0 0% 100%;
 
     /* Border and input - Dark mode */
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 213 94% 68%;
+    --border: 216 11% 17%; /* #262A30 */
+    --input: 216 11% 17%;
+    --ring: 239 84% 75%;
 
     /* Success color - Dark mode */
-    --success: 142 76% 36%;
+    --success: 160 64% 52%; /* #34D399 */
     --success-foreground: 0 0% 100%;
 
     /* Warning color - Dark mode */
-    --warning: 38 92% 50%;
+    --warning: 38 92% 56%; /* #FBBF24 */
     --warning-foreground: 0 0% 100%;
 
-    /* Gradients - Dark mode */
-    --gradient-primary: linear-gradient(135deg, hsl(213 94% 68%), hsl(213 94% 75%));
-    --gradient-hero: linear-gradient(135deg, hsl(213 94% 68%) 0%, hsl(210 100% 70%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 12%) 0%, hsl(0 0% 15%) 100%);
+    /* Gradients - Electric Purple → Neon Blue */
+    --gradient-primary: linear-gradient(135deg, hsl(283 89% 65%), hsl(217 91% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(283 89% 65%) 0%, hsl(217 91% 60%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(216 15% 8%) 0%, hsl(216 13% 13%) 100%);
 
-    /* Shadows - Dark mode */
+    /* Shadows - Dark mode with glow */
     --shadow-soft: 0 2px 8px hsl(0 0% 0% / 0.3);
     --shadow-medium: 0 4px 16px hsl(0 0% 0% / 0.4);
     --shadow-large: 0 8px 32px hsl(0 0% 0% / 0.5);
-    --shadow-glow: 0 0 24px hsl(213 94% 68% / 0.4);
+    --shadow-glow: 0 0 24px hsl(283 89% 65% / 0.4);
 
     /* Sidebar - Dark mode */
-    --sidebar-background: 0 0% 8%;
-    --sidebar-foreground: 0 0% 88%;
-    --sidebar-primary: 213 94% 68%;
+    --sidebar-background: 216 15% 8%;
+    --sidebar-foreground: 216 20% 95%;
+    --sidebar-primary: 239 84% 75%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 88%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 213 94% 68%;
+    --sidebar-accent: 216 13% 13%;
+    --sidebar-accent-foreground: 216 20% 95%;
+    --sidebar-border: 216 11% 17%;
+    --sidebar-ring: 239 84% 75%;
   }
 }
 
