@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const { theme, setTheme } = useTheme();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -58,19 +56,6 @@ const Header = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="w-9 h-9"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-              <span className="sr-only">Toggle theme</span>
-            </Button>
             <Link to="/login">
               <Button variant="ghost">Log In</Button>
             </Link>
@@ -79,21 +64,8 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Mobile Menu Button and Theme Toggle */}
-          <div className="md:hidden flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="w-9 h-9"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-              <span className="sr-only">Toggle theme</span>
-            </Button>
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
             <button
               className="p-2 rounded-md text-foreground hover:bg-muted"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
